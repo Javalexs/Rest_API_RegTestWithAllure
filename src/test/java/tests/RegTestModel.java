@@ -1,6 +1,7 @@
 package tests;
 
 import io.qameta.allure.restassured.AllureRestAssured;
+import io.restassured.specification.ResponseSpecification;
 import lombok.DataLombokCheckAcc;
 
 import lombok.LombokCheck;
@@ -15,22 +16,16 @@ import static io.restassured.http.ContentType.JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static specs.LogSpecs.*;
 
 public class RegTestModel {
     @Test
     @DisplayName("Проверка существования аккаунта с логами")
     void checkNameUserswithLog(){
-        DataLombokCheckAcc data = given()
-                .log().uri()
-                .log().headers()
-                .log().body()
-                .filter(withCustomTemplates())
-                .contentType(JSON)
+        DataLombokCheckAcc data = given(requesrSpec)
                 .when()
-                .get("https://reqres.in/api/users/2")
+                .get("/users/2")
                 .then()
-                .log().status()
-                .log().body()
                 .statusCode(200)
                 .extract().as(DataLombokCheckAcc.class);
 
@@ -43,24 +38,15 @@ public class RegTestModel {
     void checkUnLogin() {
         LombokEnterReg enter = new LombokEnterReg();
         enter.setEmail("peter@klaven");
-        LombokCheck data = given()
-                .log().uri()
-                .log().headers()
-                .log().body()
-                .filter(withCustomTemplates())
-                .contentType(JSON)
+        LombokCheck data = given(requesrSpec)
                 .body(enter)
                 .when()
-                .post("https://reqres.in/api/login")
+                .post("/login")
                 .then()
-                .log().status()
-                .log().body()
                 .statusCode(400)
                 .extract().as(LombokCheck.class);
-
         assertEquals(data.getEmail(), null);
     }
-
 
     @Test
     @DisplayName("Проверка присвоения токена при запросе")
@@ -68,18 +54,11 @@ public class RegTestModel {
         LombokEnterReg enter = new LombokEnterReg();
         enter.setEmail("eve.holt@reqres.in");
         enter.setPassword("pistol");
-        LombokCheck data = given()
-                .log().uri()
-                .log().headers()
-                .log().body()
-                .filter(withCustomTemplates())
-                .contentType(JSON)
+        LombokCheck data = given(requesrSpec)
                 .body(enter)
                 .when()
-                .post("https://reqres.in/api/register")
+                .post("/register")
                 .then()
-                .log().status()
-                .log().body()
                 .statusCode(200)
                 .extract().as(LombokCheck.class);
 
@@ -93,42 +72,25 @@ public class RegTestModel {
         ent.setName("morpheus");
         ent.setJob("leader");
 
-        LombokCheck data = given()
-                .log().uri()
-                .log().headers()
-                .log().body()
-                .filter(withCustomTemplates())
-                .contentType(JSON)
+        LombokCheck data = given(requesrSpec)
                 .body(ent)
                 .when()
-                .post("https://reqres.in/api/users")
+                .post("/users")
                 .then()
-                .log().status()
-                .log().body()
                 .statusCode(201)
                 .extract().as(LombokCheck.class);
-
         assertThat(data.getName()).isEqualTo("morpheus");
-
 
     }
     @Test
     @DisplayName("Проверка запроса данных у несуществующего аккаунта")
     void checkUnknownUser() {
-        LombokCheck data = given()
-                .log().uri()
-                .log().headers()
-                .log().body()
-                .filter(withCustomTemplates())
-                .contentType(JSON)
+        LombokCheck data = given(requesrSpec)
                 .when()
-                .get("https://reqres.in/api/users/16")
+                .get("/users/16")
                 .then()
-                .log().status()
-                .log().body()
                 .statusCode(404)
                 .extract().as(LombokCheck.class);
         assertEquals(data.getName(), null);
-
     }
 }
