@@ -1,5 +1,6 @@
 package tests;
 
+import io.qameta.allure.restassured.AllureRestAssured;
 import lombok.DataLombokCheckAcc;
 
 import lombok.LombokCheck;
@@ -8,6 +9,7 @@ import lombok.LombokEnterReg;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static helpers.CustomApiListener.withCustomTemplates;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +22,9 @@ public class RegTestModel {
     void checkNameUserswithLog(){
         DataLombokCheckAcc data = given()
                 .log().uri()
+                .log().headers()
+                .log().body()
+                .filter(withCustomTemplates())
                 .contentType(JSON)
                 .when()
                 .get("https://reqres.in/api/users/2")
@@ -40,6 +45,9 @@ public class RegTestModel {
         enter.setEmail("peter@klaven");
         LombokCheck data = given()
                 .log().uri()
+                .log().headers()
+                .log().body()
+                .filter(withCustomTemplates())
                 .contentType(JSON)
                 .body(enter)
                 .when()
@@ -62,6 +70,9 @@ public class RegTestModel {
         enter.setPassword("pistol");
         LombokCheck data = given()
                 .log().uri()
+                .log().headers()
+                .log().body()
+                .filter(withCustomTemplates())
                 .contentType(JSON)
                 .body(enter)
                 .when()
@@ -84,6 +95,9 @@ public class RegTestModel {
 
         LombokCheck data = given()
                 .log().uri()
+                .log().headers()
+                .log().body()
+                .filter(withCustomTemplates())
                 .contentType(JSON)
                 .body(ent)
                 .when()
@@ -103,6 +117,9 @@ public class RegTestModel {
     void checkUnknownUser() {
         LombokCheck data = given()
                 .log().uri()
+                .log().headers()
+                .log().body()
+                .filter(withCustomTemplates())
                 .contentType(JSON)
                 .when()
                 .get("https://reqres.in/api/users/16")
