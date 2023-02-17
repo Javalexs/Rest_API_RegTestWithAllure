@@ -1,31 +1,27 @@
 package tests;
 
-import io.qameta.allure.restassured.AllureRestAssured;
-import io.restassured.specification.ResponseSpecification;
 import lombok.DataLombokCheckAcc;
-
 import lombok.LombokCheck;
 import lombok.LombokEnterData;
 import lombok.LombokEnterReg;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static helpers.CustomApiListener.withCustomTemplates;
 import static io.restassured.RestAssured.given;
-import static io.restassured.http.ContentType.JSON;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static specs.LogSpecs.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static specs.LogSpecs.requesrSpec;
+import static specs.LogSpecs.responceSpec;
 
 public class RegTestModel {
     @Test
     @DisplayName("Проверка существования аккаунта с логами")
-    void checkNameUserswithLog(){
+    void checkNameUsersWithLog(){
         DataLombokCheckAcc data = given(requesrSpec)
                 .when()
                 .get("/users/2")
                 .then()
+                .spec(responceSpec)
                 .statusCode(200)
                 .extract().as(DataLombokCheckAcc.class);
 
@@ -43,6 +39,7 @@ public class RegTestModel {
                 .when()
                 .post("/login")
                 .then()
+                .spec(responceSpec)
                 .statusCode(400)
                 .extract().as(LombokCheck.class);
         assertEquals(data.getEmail(), null);
@@ -59,6 +56,7 @@ public class RegTestModel {
                 .when()
                 .post("/register")
                 .then()
+                .spec(responceSpec)
                 .statusCode(200)
                 .extract().as(LombokCheck.class);
 
@@ -77,6 +75,7 @@ public class RegTestModel {
                 .when()
                 .post("/users")
                 .then()
+                .spec(responceSpec)
                 .statusCode(201)
                 .extract().as(LombokCheck.class);
         assertThat(data.getName()).isEqualTo("morpheus");
@@ -89,6 +88,7 @@ public class RegTestModel {
                 .when()
                 .get("/users/16")
                 .then()
+                .spec(responceSpec)
                 .statusCode(404)
                 .extract().as(LombokCheck.class);
         assertEquals(data.getName(), null);
